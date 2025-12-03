@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Prachuu ❤️</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #020617; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+        @keyframes orbit-mobile {
+            from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.5)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 25px rgba(244, 63, 94, 0.8)); transform: scale(1.05); }
+        }
+        @keyframes fade-out {
+            0% { opacity: 1; transform: translate(0,0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-orbit { animation: orbit 12s linear infinite; }
+        .animate-orbit-mobile { animation: orbit-mobile 12s linear infinite; }
+        .animate-pulse-glow { animation: pulse-glow 3s infinite; }
+        .animate-fade-out { animation: fade-out 1s ease-out forwards; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- Icons Components (Inline SVGs) ---
+        const HeartIcon = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+        );
+
+        const FlameIcon = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.243-2.188.7-3.125A3 3 0 0 0 8.5 14.5Z" />
+            </svg>
+        );
+
+        const GemIcon = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M6 3h12l4 6-10 13L2 9Z" />
+                <path d="M11 3 8 9l4 13 4-13-3-6" />
+                <path d="M2 9h20" />
+            </svg>
+        );
+
+        const SparklesIcon = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+            </svg>
+        );
+
+        // --- Main App Logic ---
+
+        const RandomParticle = ({ x, y }) => {
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = 2 + Math.random() * 4;
+            const tx = Math.cos(angle) * 100 * velocity;
+            const ty = Math.sin(angle) * 100 * velocity;
+            
+            return (
+                <div 
+                    className="absolute pointer-events-none text-rose-400 animate-fade-out"
+                    style={{ 
+                        left: x, 
+                        top: y,
+                        '--tx': `${tx}px`,
+                        '--ty': `${ty}px`,
+                    }}
+                >
+                    <HeartIcon size={16} className="fill-current" />
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [timeTogether, setTimeTogether] = React.useState({ days: 14, hours: 0, minutes: 0, seconds: 0 });
+            const [particles, setParticles] = React.useState([]);
+
+            React.useEffect(() => {
+                const startDate = new Date();
+                startDate.setDate(startDate.getDate() - 14); 
+                
+                const timer = setInterval(() => {
+                    const now = new Date();
+                    const diff = now - startDate;
+                    
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const minutes = Math.floor((diff / 1000 / 60) % 60);
+                    const seconds = Math.floor((diff / 1000) % 60);
+                    
+                    setTimeTogether({ days, hours, minutes, seconds });
+                }, 1000);
+
+                return () => clearInterval(timer);
+            }, []);
+
+            const handleInteraction = (e) => {
+                const x = e.clientX || (e.touches && e.touches[0].clientX);
+                const y = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (x && y) {
+                    const id = Date.now();
+                    const newParticles = Array.from({ length: 8 }).map((_, i) => ({
+                        id: id + i,
+                        x,
+                        y
+                    }));
+                    
+                    setParticles(prev => [...prev, ...newParticles]);
+                    
+                    setTimeout(() => {
+                        setParticles(prev => prev.filter(p => p.id < id));
+                    }, 1000);
+                }
+            };
+
+            return (
+                <div 
+                    className="relative w-full h-screen bg-slate-950 overflow-hidden font-sans select-none text-white"
+                    onClick={handleInteraction}
+                    onTouchStart={handleInteraction}
+                >
+                    {/* Background Stars */}
+                    <div className="absolute inset-0 opacity-40">
+                        {[...Array(50)].map((_, i) => (
+                            <div
+                                key={i}
+                                className="absolute rounded-full bg-white animate-pulse"
+                                style={{
+                                    top: `${Math.random() * 100}%`,
+                                    left: `${Math.random() * 100}%`,
+                                    width: `${Math.random() * 3}px`,
+                                    height: `${Math.random() * 3}px`,
+                                    animationDuration: `${Math.random() * 3 + 2}s`,
+                                    animationDelay: `${Math.random() * 2}s`
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
+                        
+                        <div className="relative mb-12">
+                            {/* Orbit Ring */}
+                            <div className="absolute top-1/2 left-1/2 w-0 h-0 hidden md:block">
+                                <div className="animate-orbit origin-center">
+                                    <span className="text-4xl filter drop-shadow-lg">💍</span>
+                                </div>
+                            </div>
+                            <div className="absolute top-1/2 left-1/2 w-0 h-0 block md:hidden">
+                                <div className="animate-orbit-mobile origin-center">
+                                    <span className="text-2xl filter drop-shadow-lg">💍</span>
+                                </div>
+                            </div>
+
+                            {/* Center Title */}
+                            <div className="flex flex-col items-center justify-center animate-float">
+                                <div className="text-6xl md:text-8xl mb-4 animate-pulse-glow transition-transform active:scale-95 cursor-pointer">
+                                    🫀
+                                </div>
+                                <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-rose-300 to-indigo-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] tracking-tight">
+                                    MyPrachuu
+                                </h1>
+                                <div className="flex items-center gap-2 mt-2 text-yellow-200 opacity-80">
+                                    <SparklesIcon size={16} />
+                                    <span className="text-sm font-medium tracking-widest uppercase">My Universe</span>
+                                    <SparklesIcon size={16} />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Cards */}
+                        <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+                            <div className="glass-panel rounded-2xl p-4 flex flex-col items-center justify-center col-span-2 transform hover:scale-[1.02] transition-all duration-300">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <FlameIcon className="text-orange-500 fill-orange-500 animate-bounce" size={24} />
+                                    <span className="text-slate-300 font-medium">The Streak</span>
+                                </div>
+                                <div className="text-5xl font-bold text-white tracking-tighter tabular-nums">
+                                    {timeTogether.days}
+                                </div>
+                                <div className="text-xs text-slate-400 mt-1 uppercase tracking-wide">Days on Fire</div>
+                            </div>
+
+                            <div className="glass-panel rounded-2xl p-4 flex flex-col items-center justify-center">
+                                <span className="text-2xl font-bold text-pink-200 tabular-nums">{timeTogether.hours}</span>
+                                <span className="text-[10px] text-pink-400/70 uppercase">Hours</span>
+                            </div>
+
+                            <div className="glass-panel rounded-2xl p-4 flex flex-col items-center justify-center">
+                                <span className="text-2xl font-bold text-pink-200 tabular-nums">
+                                    {timeTogether.minutes}:{timeTogether.seconds.toString().padStart(2, '0')}
+                                </span>
+                                <span className="text-[10px] text-pink-400/70 uppercase">Mins : Secs</span>
+                            </div>
+
+                            <div className="glass-panel rounded-2xl p-4 col-span-2 flex items-center gap-3 mt-2 border-l-4 border-l-rose-500 bg-gradient-to-r from-rose-500/10 to-transparent">
+                                <div className="bg-rose-500/20 p-2 rounded-full">
+                                    <GemIcon className="text-rose-400" size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-rose-200/80 italic">Currently pinned</p>
+                                    <p className="text-sm font-medium text-white">Always at the top of my list.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div className="absolute bottom-8 text-slate-500 text-xs animate-pulse">
+                            Tap anywhere for magic ✨
+                        </div>
+                    </div>
+
+                    {particles.map(p => (
+                        <RandomParticle key={p.id} x={p.x} y={p.y} />
+                    ))}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+
