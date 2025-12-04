@@ -1,217 +1,213 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Frown, Pizza, Sparkles, X, Gift, Coffee, CloudRain, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, Sun, Coffee, Smile, Star, Gift, MessageCircle, Music, ArrowRight } from 'lucide-react';
 
-const PrachuuMoodFixer = () => {
+const App = () => {
   const [round, setRound] = useState(0);
-  const [clicks, setClicks] = useState(0);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [selectedFood, setSelectedFood] = useState(null);
+  const [bubblesPopped, setBubblesPopped] = useState(0);
+  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
+  const [showLove, setShowLove] = useState(false);
 
-  // Round 0: Welcome Screen
-  // Round 1: Mood Meter (Validation)
-  // Round 2: Fight the Cramps (Clicker Game)
-  // Round 3: Food Cravings (Menu)
-  // Round 4: The Truth (Compliment)
-  // Round 5: Final Surprise (Love Note)
+  // Data for the Bubble Wrap Game
+  const bubbles = Array(12).fill(0);
 
   const nextRound = () => setRound(prev => prev + 1);
 
-  const handleCrampPunch = () => {
-    const newClicks = clicks + 1;
-    setClicks(newClicks);
-    if (newClicks >= 10) {
-      setTimeout(nextRound, 500);
-    }
-  };
-
-  const handleFoodSelection = (food) => {
-    setSelectedFood(food);
-    setTimeout(nextRound, 1500);
+  // Logic for the running "No" button in Round 4
+  const moveNoButton = () => {
+    const x = Math.random() * 200 - 100; // Random X movement
+    const y = Math.random() * 100 - 50;  // Random Y movement
+    setNoButtonPos({ x, y });
   };
 
   return (
-    <div className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4 font-sans text-gray-800 relative overflow-hidden">
+    <div className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4 font-sans text-gray-800 relative overflow-hidden select-none">
       
-      {/* Background Decor */}
-      <div className="absolute top-10 left-10 text-pink-200 animate-pulse"><Heart size={40} /></div>
-      <div className="absolute bottom-10 right-10 text-pink-200 animate-bounce"><Heart size={40} /></div>
-      
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 w-full max-w-md border-4 border-pink-200 min-h-[400px] flex flex-col items-center justify-center text-center transition-all duration-500">
+      {/* Floating Background Elements */}
+      <div className="absolute top-10 left-10 text-yellow-400 animate-spin-slow"><Sun size={50} /></div>
+      <div className="absolute bottom-20 right-10 text-pink-300 animate-bounce"><Heart size={40} /></div>
+      <div className="absolute top-1/2 left-5 text-purple-300 opacity-50"><Star size={30} /></div>
+
+      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md border-4 border-pink-100 relative z-10 transition-all duration-500 min-h-[450px] flex flex-col items-center justify-center text-center">
         
-        {/* PROGRESS BAR */}
-        <div className="w-full h-2 bg-gray-100 rounded-full mb-6 absolute top-0 left-0">
+        {/* Progress Bar */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-gray-100 rounded-t-3xl overflow-hidden">
           <div 
-            className="h-full bg-pink-500 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-pink-400 to-purple-500 transition-all duration-500"
             style={{ width: `${(round / 5) * 100}%` }}
           ></div>
         </div>
 
-        {/* ROUND 0: WELCOME */}
+        {/* ROUND 0: INTRO */}
         {round === 0 && (
           <div className="space-y-6 animate-fade-in">
-            <h1 className="text-3xl font-bold text-pink-600">Hello Prachuu! ❤️</h1>
-            <p className="text-lg text-gray-600">
-              Suna hai aaj tumhara mood thoda off hai?
-              <br/>
-              Isliye tumhare liye ek special "Mood Fixing Machine" banayi hai.
+            <div className="bg-pink-100 p-4 rounded-full inline-block mb-2">
+              <Smile size={48} className="text-pink-500" />
+            </div>
+            <h1 className="text-3xl font-extrabold text-gray-800">Prachuu's <br/> <span className="text-pink-500">Smile Generator</span></h1>
+            <p className="text-gray-500 text-lg">
+              Warning: Isko khelne ke baad gussa hona allowed nahi hai. 🚫😡
             </p>
             <button 
               onClick={nextRound}
-              className="bg-pink-500 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:bg-pink-600 transform hover:scale-105 transition-all"
+              className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-full font-bold text-xl shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto"
             >
-              Start Magic ✨
+              Start Mission <ArrowRight size={20} />
             </button>
           </div>
         )}
 
-        {/* ROUND 1: VALIDATION */}
+        {/* ROUND 1: MOOD DETECTOR */}
         {round === 1 && (
-          <div className="space-y-6 animate-fade-in">
-            <h2 className="text-2xl font-bold text-pink-500">Round 1: Sach Batao</h2>
-            <p className="text-lg">Abhi kaisa feel ho raha hai?</p>
+          <div className="space-y-6 w-full animate-fade-in">
+            <h2 className="text-2xl font-bold text-purple-600">Round 1: Mood Check</h2>
+            <p className="text-gray-600">Abhi current situation kya hai?</p>
             
-            <div className="grid grid-cols-1 gap-3 w-full">
-              <button onClick={nextRound} className="p-3 border-2 border-pink-200 rounded-xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2">
-                <CloudRain size={20} /> Bohot Rona aa raha hai 😭
+            <div className="grid gap-3 w-full">
+              <button onClick={nextRound} className="p-4 bg-red-50 border-2 border-red-100 rounded-xl hover:bg-red-100 transition flex items-center justify-between group">
+                <span className="font-semibold text-red-700">Dimag kharab hai 🤯</span>
+                <span className="opacity-0 group-hover:opacity-100">👉</span>
               </button>
-              <button onClick={nextRound} className="p-3 border-2 border-pink-200 rounded-xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2">
-                <Zap size={20} /> Sabpe gussa aa raha hai 😡
+              <button onClick={nextRound} className="p-4 bg-blue-50 border-2 border-blue-100 rounded-xl hover:bg-blue-100 transition flex items-center justify-between group">
+                <span className="font-semibold text-blue-700">Bas aise hi sad hu 🥺</span>
+                <span className="opacity-0 group-hover:opacity-100">👉</span>
               </button>
-              <button onClick={nextRound} className="p-3 border-2 border-pink-200 rounded-xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2">
-                <Frown size={20} /> Bas man nahi lag raha 🥺
+              <button onClick={nextRound} className="p-4 bg-green-50 border-2 border-green-100 rounded-xl hover:bg-green-100 transition flex items-center justify-between group">
+                <span className="font-semibold text-green-700">Pata nahi yaar 🤷‍♀️</span>
+                <span className="opacity-0 group-hover:opacity-100">👉</span>
               </button>
             </div>
-            <p className="text-xs text-gray-400 mt-4">(Spoiler: Option jo bhi ho, galti meri hi hogi shayad 😂)</p>
           </div>
         )}
 
-        {/* ROUND 2: FIGHT THE CRAMPS */}
+        {/* ROUND 2: STRESS BUSTER (BUBBLE WRAP) */}
         {round === 2 && (
-          <div className="space-y-6 animate-fade-in">
-            <h2 className="text-2xl font-bold text-red-500">Round 2: The Enemy</h2>
-            <p className="text-lg">Ye 'Cramps' bohot pareshan kar rahe hain na?</p>
-            <p className="text-sm text-gray-500">Button ko zor se daba ke inhe bhagao! (Tap 10 times)</p>
+          <div className="space-y-4 w-full animate-fade-in">
+            <h2 className="text-2xl font-bold text-blue-500">Round 2: Gussa Nikaalo</h2>
+            <p className="text-sm text-gray-500">In bubbles ko phodo! (Pop 6 to continue)</p>
             
-            <button 
-              onClick={handleCrampPunch}
-              className="w-32 h-32 rounded-full bg-red-100 border-4 border-red-500 flex items-center justify-center text-4xl shadow-inner active:scale-90 transition-transform select-none cursor-pointer"
-            >
-              {clicks >= 10 ? '😵' : '👊'}
-            </button>
-            
-            <div className="w-full bg-gray-200 rounded-full h-4 mt-4">
-              <div 
-                className="bg-red-500 h-4 rounded-full transition-all duration-100" 
-                style={{ width: `${(clicks / 10) * 100}%` }}
-              ></div>
+            <div className="grid grid-cols-4 gap-3 p-4 bg-gray-100 rounded-xl">
+              {bubbles.map((_, i) => (
+                <button
+                  key={i}
+                  disabled={i < bubblesPopped}
+                  onClick={() => {
+                    setBubblesPopped(prev => prev + 1);
+                    if (bubblesPopped + 1 >= 6) {
+                      setTimeout(nextRound, 800);
+                    }
+                  }}
+                  className={`h-12 w-12 rounded-full shadow-inner flex items-center justify-center transition-all duration-200 ${
+                    i < bubblesPopped 
+                      ? 'bg-gray-300 scale-90' 
+                      : 'bg-blue-300 hover:bg-blue-400 active:scale-90 cursor-pointer'
+                  }`}
+                >
+                  {i < bubblesPopped ? '💥' : ''}
+                </button>
+              ))}
             </div>
-            {clicks > 0 && clicks < 10 && <p className="font-bold text-red-400">Dishoom!!</p>}
-            {clicks >= 10 && <p className="font-bold text-green-500">Enemy Defeated! Good job!</p>}
+            <p className="text-xs text-gray-400">Satisfaction level: 100%</p>
           </div>
         )}
 
-        {/* ROUND 3: FOOD CRAVINGS */}
+        {/* ROUND 3: SNACK SELECTION */}
         {round === 3 && (
-          <div className="space-y-4 animate-fade-in w-full">
-            <h2 className="text-2xl font-bold text-orange-500">Round 3: Cravings Time</h2>
-            <p>Agar abhi ek wish puri ho, toh kya chahiye?</p>
+          <div className="space-y-4 w-full animate-fade-in">
+            <h2 className="text-2xl font-bold text-orange-500">Round 3: Order Karo</h2>
+            <p className="text-gray-600">Mood fix karne ke liye kya chahiye?</p>
             
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <button 
-                onClick={() => handleFoodSelection('Chocolate')} 
-                className="flex flex-col items-center p-4 bg-amber-100 rounded-xl hover:scale-105 transition-transform"
-              >
-                <span className="text-4xl mb-2">🍫</span>
-                <span className="font-semibold text-amber-800">Chocolate</span>
+            <div className="grid grid-cols-2 gap-4">
+              <button onClick={nextRound} className="p-4 bg-yellow-50 rounded-2xl hover:bg-yellow-100 hover:scale-105 transition shadow-sm">
+                <div className="text-4xl mb-2">🥟</div>
+                <div className="font-bold text-yellow-800">Momos</div>
               </button>
-              
-              <button 
-                onClick={() => handleFoodSelection('Pizza')} 
-                className="flex flex-col items-center p-4 bg-orange-100 rounded-xl hover:scale-105 transition-transform"
-              >
-                <span className="text-4xl mb-2">🍕</span>
-                <span className="font-semibold text-orange-800">Pizza</span>
+              <button onClick={nextRound} className="p-4 bg-amber-50 rounded-2xl hover:bg-amber-100 hover:scale-105 transition shadow-sm">
+                <div className="text-4xl mb-2">🍫</div>
+                <div className="font-bold text-amber-800">Chocolate</div>
               </button>
-              
-              <button 
-                onClick={() => handleFoodSelection('Ice Cream')} 
-                className="flex flex-col items-center p-4 bg-pink-100 rounded-xl hover:scale-105 transition-transform"
-              >
-                <span className="text-4xl mb-2">🍦</span>
-                <span className="font-semibold text-pink-800">Ice Cream</span>
+              <button onClick={nextRound} className="p-4 bg-pink-50 rounded-2xl hover:bg-pink-100 hover:scale-105 transition shadow-sm">
+                <div className="text-4xl mb-2">🫂</div>
+                <div className="font-bold text-pink-800">Jaadu ki Jhappi</div>
               </button>
-              
-              <button 
-                onClick={() => handleFoodSelection('Brain')} 
-                className="flex flex-col items-center p-4 bg-gray-100 rounded-xl hover:scale-105 transition-transform"
-              >
-                <span className="text-4xl mb-2">🧠</span>
-                <span className="font-semibold text-gray-800">Tumhara Dimaag</span>
+              <button onClick={() => alert("Sorry, yeh item abhi Out of Stock hai! 😂")} className="p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 hover:scale-105 transition shadow-sm">
+                <div className="text-4xl mb-2">🧠</div>
+                <div className="font-bold text-gray-800">Mera Bheja</div>
               </button>
             </div>
-
-            {selectedFood === 'Brain' && (
-              <p className="text-red-500 font-bold animate-pulse">Wo toh tum roz khati ho! 😂 Next Round...</p>
-            )}
-            {selectedFood && selectedFood !== 'Brain' && (
-              <p className="text-green-500 font-bold">Good choice! Virtual delivery on the way! 🚚</p>
-            )}
           </div>
         )}
 
-        {/* ROUND 4: THE MIRROR */}
+        {/* ROUND 4: TRICK QUESTION */}
         {round === 4 && (
-          <div className="space-y-6 animate-fade-in">
-            <h2 className="text-2xl font-bold text-purple-500">Round 4: Sach ka Saamna</h2>
-            <p className="text-lg">Tumhe lagta hoga ki tum abhi tired dikh rahi ho...</p>
-            <p className="text-sm text-gray-500">Lekin asliyat dekhne ke liye button dabao 👇</p>
+          <div className="space-y-6 w-full animate-fade-in">
+            <h2 className="text-2xl font-bold text-pink-600">Round 4: Sach Sach Batana</h2>
+            <p className="text-lg font-medium">Kya main duniya ka sabse best boyfriend hu? 😎</p>
             
-            <div className="relative group">
+            <div className="relative h-24 w-full flex justify-center items-center gap-8 mt-4">
               <button 
                 onClick={nextRound}
-                className="bg-gradient-to-r from-purple-400 to-pink-500 text-white px-6 py-12 rounded-lg font-bold text-xl shadow-xl w-64 transform transition-all duration-500 hover:rotate-y-180"
+                className="bg-green-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-600 active:scale-95 transition z-20"
               >
-                Tap to Reveal Truth
+                HAAN JI ❤️
+              </button>
+              
+              <button 
+                onMouseEnter={moveNoButton}
+                onClick={moveNoButton}
+                style={{ 
+                  transform: `translate(${noButtonPos.x}px, ${noButtonPos.y}px)`,
+                  transition: 'all 0.2s ease-out'
+                }}
+                className="bg-red-400 text-white px-8 py-3 rounded-full font-bold shadow-lg absolute z-10"
+              >
+                NAHI 😒
               </button>
             </div>
-            <p className="text-xs text-gray-400">Trust me, I'm never wrong.</p>
+            <p className="text-xs text-gray-400 mt-8">(Try clicking 'Nahi' if you can 😜)</p>
           </div>
         )}
 
-        {/* ROUND 5: FINALE */}
+        {/* ROUND 5: FINAL SURPRISE */}
         {round === 5 && (
-          <div className="space-y-6 animate-fade-in flex flex-col items-center">
-            <h2 className="text-3xl font-bold text-pink-600">The Truth is...</h2>
+          <div className="space-y-6 animate-fade-in flex flex-col items-center w-full">
+            <div className="relative">
+              <Heart 
+                size={100} 
+                fill={showLove ? "#ec4899" : "none"} 
+                className={`text-pink-500 transition-all duration-1000 ${showLove ? 'scale-125 animate-pulse' : 'scale-100'}`} 
+              />
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-xl">
+                Prachuu
+              </div>
+            </div>
             
-            <div className="bg-pink-100 p-6 rounded-2xl rotate-1 shadow-lg max-w-xs">
-              <p className="text-lg font-medium text-gray-800 leading-relaxed">
-                Tum duniya ki sabse pyari ladki ho, chahe mood kaisa bhi ho. 
-                <br/><br/>
-                Thoda dard hai, thoda gussa hai, par main hamesha yahi hoon tumhare paas.
+            <h2 className="text-3xl font-bold text-gray-800">I Love You! ❤️</h2>
+            
+            <div className="bg-pink-50 p-6 rounded-2xl text-left shadow-inner w-full">
+              <p className="text-gray-700 leading-relaxed font-medium">
+                Chahe mood kaisa bhi ho, gussa ho ya sad ho, tum hamesha meri favorite rahogi.
+                Smile kar do ab please? 
               </p>
             </div>
 
-            <div className="flex gap-2 text-4xl animate-bounce mt-4">
-              ❤️ 🥔 😘
-            </div>
-
             <button 
-              className="mt-6 bg-green-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-600 active:scale-95 transition-all flex items-center gap-2"
-              onClick={() => alert("Virtual Hug Sent! 🤗")}
+              onMouseEnter={() => setShowLove(true)}
+              onClick={() => alert("Ye hug real life mein due hai! Jaldi milega! 🤗")}
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-xl font-bold text-lg shadow-xl hover:opacity-90 transition-all flex justify-center items-center gap-2"
             >
-              <Gift size={20} /> Receive Virtual Hug
+              <Gift size={24} /> Claim Your Hug
             </button>
-             
-             <p className="text-xs text-gray-400 mt-8">
-               Made with love for Prachuu
-             </p>
           </div>
         )}
 
+      </div>
+      
+      <div className="mt-8 text-pink-300 text-sm font-semibold tracking-widest uppercase">
+        Only for Prachuu
       </div>
     </div>
   );
 };
 
-export default PrachuuMoodFixer;
+export default App;
 
