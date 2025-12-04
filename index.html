@@ -1,253 +1,217 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Notice for Prachuu ⚠️</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #fef3c7; /* Light Yellow Background */
-            overflow: hidden;
-            touch-action: manipulation;
-        }
-        .comic-font {
-            font-family: 'Fredoka One', cursive;
-        }
+import React, { useState, useEffect } from 'react';
+import { Heart, Frown, Pizza, Sparkles, X, Gift, Coffee, CloudRain, Zap } from 'lucide-react';
+
+const PrachuuMoodFixer = () => {
+  const [round, setRound] = useState(0);
+  const [clicks, setClicks] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [selectedFood, setSelectedFood] = useState(null);
+
+  // Round 0: Welcome Screen
+  // Round 1: Mood Meter (Validation)
+  // Round 2: Fight the Cramps (Clicker Game)
+  // Round 3: Food Cravings (Menu)
+  // Round 4: The Truth (Compliment)
+  // Round 5: Final Surprise (Love Note)
+
+  const nextRound = () => setRound(prev => prev + 1);
+
+  const handleCrampPunch = () => {
+    const newClicks = clicks + 1;
+    setClicks(newClicks);
+    if (newClicks >= 10) {
+      setTimeout(nextRound, 500);
+    }
+  };
+
+  const handleFoodSelection = (food) => {
+    setSelectedFood(food);
+    setTimeout(nextRound, 1500);
+  };
+
+  return (
+    <div className="min-h-screen bg-pink-50 flex flex-col items-center justify-center p-4 font-sans text-gray-800 relative overflow-hidden">
+      
+      {/* Background Decor */}
+      <div className="absolute top-10 left-10 text-pink-200 animate-pulse"><Heart size={40} /></div>
+      <div className="absolute bottom-10 right-10 text-pink-200 animate-bounce"><Heart size={40} /></div>
+      
+      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-6 w-full max-w-md border-4 border-pink-200 min-h-[400px] flex flex-col items-center justify-center text-center transition-all duration-500">
         
-        /* Card Styles */
-        .slide-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .slide {
-            position: absolute;
-            width: 90%;
-            max-width: 380px;
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 10px 10px 0px #fbbf24;
-            border: 4px solid #000;
-            text-align: center;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(100vh) rotate(-10deg);
-        }
-        .slide.active {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0) rotate(0deg);
-        }
-        .slide.exit {
-            transform: translateY(-100vh) rotate(10deg);
-            opacity: 0;
-        }
-
-        /* CARTOON IMAGES STYLING */
-        .gif-img {
-            width: 100%;
-            height: 200px; /* Bigger size */
-            object-fit: contain;
-            margin-bottom: 1rem;
-            border-radius: 10px;
-            background-color: #f3f4f6; /* Placeholder color */
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            width: 100%;
-            padding: 12px 0;
-            margin-top: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: 3px solid black;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 4px 4px 0px black;
-        }
-        .btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px black;
-        }
-        .btn-yes { background-color: #4ade80; color: black; }
-        .btn-no { background-color: #f87171; color: black; }
-        .btn-next { background-color: #60a5fa; color: black; }
-
-        /* Animations */
-        .wiggle { animation: wiggle 2s linear infinite; }
-        @keyframes wiggle {
-            0%, 7% { transform: rotateZ(0); }
-            15% { transform: rotateZ(-5deg); }
-            20% { transform: rotateZ(3deg); }
-            25% { transform: rotateZ(-5deg); }
-            30% { transform: rotateZ(2deg); }
-            35%, 100% { transform: rotateZ(0); }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Background Music -->
-    <audio id="bgMusic" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-funny-comedy-cartoon-3088.mp3" type="audio/mpeg">
-    </audio>
-
-    <div class="slide-container">
-        
-        <!-- SLIDE 1: Warning -->
-        <div id="s1" class="slide active">
-            <h1 class="text-3xl comic-font text-red-500 mb-2 wiggle">⚠️ URGENT ⚠️</h1>
-            <!-- Serious Cat typing -->
-            <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" class="gif-img" alt="Cat Typing">
-            <p class="text-lg font-bold">Prachuu, Ek important notice aayi hai!</p>
-            <p class="text-sm text-gray-500 mb-2">Turant padhna zaroori hai.</p>
-            <button onclick="nextSlide('s1', 's2')" class="btn btn-next">Dikhao kya hai? 🧐</button>
+        {/* PROGRESS BAR */}
+        <div className="w-full h-2 bg-gray-100 rounded-full mb-6 absolute top-0 left-0">
+          <div 
+            className="h-full bg-pink-500 rounded-full transition-all duration-500"
+            style={{ width: `${(round / 5) * 100}%` }}
+          ></div>
         </div>
 
-        <!-- SLIDE 2: Investigation -->
-        <div id="s2" class="slide">
-            <h1 class="text-2xl comic-font mb-2">Investigation Report 🕵️‍♂️</h1>
-            <!-- Suspicious Dog -->
-            <img src="https://media.giphy.com/media/3o7527pa7qs9kCG78A/giphy.gif" class="gif-img" alt="Looking closely">
-            <p class="mb-4">Maine bohot research ki aur pata chala ki...</p>
-            <p class="font-bold text-pink-600 text-xl">Tumhari life mein "Mera" hona bohot zaroori hai.</p>
-            <button onclick="nextSlide('s2', 's3')" class="btn btn-next">Kuch bhi? 😂</button>
-        </div>
+        {/* ROUND 0: WELCOME */}
+        {round === 0 && (
+          <div className="space-y-6 animate-fade-in">
+            <h1 className="text-3xl font-bold text-pink-600">Hello Prachuu! ❤️</h1>
+            <p className="text-lg text-gray-600">
+              Suna hai aaj tumhara mood thoda off hai?
+              <br/>
+              Isliye tumhare liye ek special "Mood Fixing Machine" banayi hai.
+            </p>
+            <button 
+              onClick={nextRound}
+              className="bg-pink-500 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:bg-pink-600 transform hover:scale-105 transition-all"
+            >
+              Start Magic ✨
+            </button>
+          </div>
+        )}
 
-        <!-- SLIDE 3: Skills -->
-        <div id="s3" class="slide">
-            <h1 class="text-2xl comic-font mb-2">My Special Skills 💪</h1>
-            <!-- Dancing Duck -->
-            <img src="https://media.giphy.com/media/GeimqsH0TLDt4tScGw/giphy.gif" class="gif-img" alt="Vibing Cat">
-            <ul class="text-left bg-gray-100 p-3 rounded-lg border-2 border-black mb-4 text-sm font-bold space-y-2">
-                <li>🍔 Foodie Partner (Main tumhara bacha hua khana kha lunga)</li>
-                <li>📸 Personal Photographer (Jab tak tum achi na lago)</li>
-                <li>🤡 Professional Joker (Sirf tumhe hasane ke liye)</li>
-            </ul>
-            <button onclick="nextSlide('s3', 's4')" class="btn btn-next">Hmmm, interesting 🤔</button>
-        </div>
-
-        <!-- SLIDE 4: T&C -->
-        <div id="s4" class="slide">
-            <h1 class="text-2xl comic-font text-red-600 mb-2">Terms & Conditions 📜</h1>
-            <!-- Signing Paper -->
-            <img src="https://media.giphy.com/media/l0HlJDaeqNUDhhaMg/giphy.gif" class="gif-img" alt="Signing">
-            <p class="text-sm mb-4">Clicking "Yes" means:</p>
-            <div class="bg-yellow-100 p-2 rounded border border-yellow-400 text-xs text-left mb-4">
-                1. No Returns allowed.<br>
-                2. Ladayi ke baad 'Sorry' tum nahi bologe (Main bolunga).<br>
-                3. Lifetime validity.<br>
+        {/* ROUND 1: VALIDATION */}
+        {round === 1 && (
+          <div className="space-y-6 animate-fade-in">
+            <h2 className="text-2xl font-bold text-pink-500">Round 1: Sach Batao</h2>
+            <p className="text-lg">Abhi kaisa feel ho raha hai?</p>
+            
+            <div className="grid grid-cols-1 gap-3 w-full">
+              <button onClick={nextRound} className="p-3 border-2 border-pink-200 rounded-xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2">
+                <CloudRain size={20} /> Bohot Rona aa raha hai 😭
+              </button>
+              <button onClick={nextRound} className="p-3 border-2 border-pink-200 rounded-xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2">
+                <Zap size={20} /> Sabpe gussa aa raha hai 😡
+              </button>
+              <button onClick={nextRound} className="p-3 border-2 border-pink-200 rounded-xl hover:bg-pink-100 transition-colors flex items-center justify-center gap-2">
+                <Frown size={20} /> Bas man nahi lag raha 🥺
+              </button>
             </div>
-            <button onclick="nextSlide('s4', 's5')" class="btn btn-next">Okay, Manzoor hai ✅</button>
-        </div>
+            <p className="text-xs text-gray-400 mt-4">(Spoiler: Option jo bhi ho, galti meri hi hogi shayad 😂)</p>
+          </div>
+        )}
 
-        <!-- SLIDE 5: Proposal -->
-        <div id="s5" class="slide">
-            <h1 class="text-3xl comic-font text-pink-500 mb-2">Final Faisla!</h1>
-            <!-- Pleading Eyes Cat -->
-            <img src="https://media.giphy.com/media/qUIm5wu6LAAI1wEdtP/giphy.gif" class="gif-img" alt="Please">
-            <p class="text-xl font-bold mb-6">Will you be my Girlfriend? 💍</p>
+        {/* ROUND 2: FIGHT THE CRAMPS */}
+        {round === 2 && (
+          <div className="space-y-6 animate-fade-in">
+            <h2 className="text-2xl font-bold text-red-500">Round 2: The Enemy</h2>
+            <p className="text-lg">Ye 'Cramps' bohot pareshan kar rahe hain na?</p>
+            <p className="text-sm text-gray-500">Button ko zor se daba ke inhe bhagao! (Tap 10 times)</p>
             
-            <button onclick="sheSaidYes()" class="btn btn-yes">HAAN JI! 😍</button>
-            <button id="runaway-btn" onmouseover="moveBtn()" ontouchstart="moveBtn()" class="btn btn-no">Nahi 😒</button>
-        </div>
+            <button 
+              onClick={handleCrampPunch}
+              className="w-32 h-32 rounded-full bg-red-100 border-4 border-red-500 flex items-center justify-center text-4xl shadow-inner active:scale-90 transition-transform select-none cursor-pointer"
+            >
+              {clicks >= 10 ? '😵' : '👊'}
+            </button>
+            
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-4">
+              <div 
+                className="bg-red-500 h-4 rounded-full transition-all duration-100" 
+                style={{ width: `${(clicks / 10) * 100}%` }}
+              ></div>
+            </div>
+            {clicks > 0 && clicks < 10 && <p className="font-bold text-red-400">Dishoom!!</p>}
+            {clicks >= 10 && <p className="font-bold text-green-500">Enemy Defeated! Good job!</p>}
+          </div>
+        )}
 
-        <!-- SLIDE 6: Success -->
-        <div id="s6" class="slide">
-            <h1 class="text-4xl comic-font text-green-600 mb-4">MISSION PASSED! 🎉</h1>
-            <!-- Happy Celebration -->
-            <img src="https://media.giphy.com/media/T86i6yDyOYz7J6dPhf/giphy.gif" class="gif-img" alt="Happy Dance">
-            <h2 class="text-xl font-bold mb-2">Welcome to the Crazy Life!</h2>
-            <p class="mb-4">Ab toh fas gayi tum! 😂❤️</p>
-            <p class="text-sm text-gray-500">I Love You Prachuu!</p>
-        </div>
+        {/* ROUND 3: FOOD CRAVINGS */}
+        {round === 3 && (
+          <div className="space-y-4 animate-fade-in w-full">
+            <h2 className="text-2xl font-bold text-orange-500">Round 3: Cravings Time</h2>
+            <p>Agar abhi ek wish puri ho, toh kya chahiye?</p>
+            
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <button 
+                onClick={() => handleFoodSelection('Chocolate')} 
+                className="flex flex-col items-center p-4 bg-amber-100 rounded-xl hover:scale-105 transition-transform"
+              >
+                <span className="text-4xl mb-2">🍫</span>
+                <span className="font-semibold text-amber-800">Chocolate</span>
+              </button>
+              
+              <button 
+                onClick={() => handleFoodSelection('Pizza')} 
+                className="flex flex-col items-center p-4 bg-orange-100 rounded-xl hover:scale-105 transition-transform"
+              >
+                <span className="text-4xl mb-2">🍕</span>
+                <span className="font-semibold text-orange-800">Pizza</span>
+              </button>
+              
+              <button 
+                onClick={() => handleFoodSelection('Ice Cream')} 
+                className="flex flex-col items-center p-4 bg-pink-100 rounded-xl hover:scale-105 transition-transform"
+              >
+                <span className="text-4xl mb-2">🍦</span>
+                <span className="font-semibold text-pink-800">Ice Cream</span>
+              </button>
+              
+              <button 
+                onClick={() => handleFoodSelection('Brain')} 
+                className="flex flex-col items-center p-4 bg-gray-100 rounded-xl hover:scale-105 transition-transform"
+              >
+                <span className="text-4xl mb-2">🧠</span>
+                <span className="font-semibold text-gray-800">Tumhara Dimaag</span>
+              </button>
+            </div>
 
+            {selectedFood === 'Brain' && (
+              <p className="text-red-500 font-bold animate-pulse">Wo toh tum roz khati ho! 😂 Next Round...</p>
+            )}
+            {selectedFood && selectedFood !== 'Brain' && (
+              <p className="text-green-500 font-bold">Good choice! Virtual delivery on the way! 🚚</p>
+            )}
+          </div>
+        )}
+
+        {/* ROUND 4: THE MIRROR */}
+        {round === 4 && (
+          <div className="space-y-6 animate-fade-in">
+            <h2 className="text-2xl font-bold text-purple-500">Round 4: Sach ka Saamna</h2>
+            <p className="text-lg">Tumhe lagta hoga ki tum abhi tired dikh rahi ho...</p>
+            <p className="text-sm text-gray-500">Lekin asliyat dekhne ke liye button dabao 👇</p>
+            
+            <div className="relative group">
+              <button 
+                onClick={nextRound}
+                className="bg-gradient-to-r from-purple-400 to-pink-500 text-white px-6 py-12 rounded-lg font-bold text-xl shadow-xl w-64 transform transition-all duration-500 hover:rotate-y-180"
+              >
+                Tap to Reveal Truth
+              </button>
+            </div>
+            <p className="text-xs text-gray-400">Trust me, I'm never wrong.</p>
+          </div>
+        )}
+
+        {/* ROUND 5: FINALE */}
+        {round === 5 && (
+          <div className="space-y-6 animate-fade-in flex flex-col items-center">
+            <h2 className="text-3xl font-bold text-pink-600">The Truth is...</h2>
+            
+            <div className="bg-pink-100 p-6 rounded-2xl rotate-1 shadow-lg max-w-xs">
+              <p className="text-lg font-medium text-gray-800 leading-relaxed">
+                Tum duniya ki sabse pyari ladki ho, chahe mood kaisa bhi ho. 
+                <br/><br/>
+                Thoda dard hai, thoda gussa hai, par main hamesha yahi hoon tumhare paas.
+              </p>
+            </div>
+
+            <div className="flex gap-2 text-4xl animate-bounce mt-4">
+              ❤️ 🥔 😘
+            </div>
+
+            <button 
+              className="mt-6 bg-green-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-green-600 active:scale-95 transition-all flex items-center gap-2"
+              onClick={() => alert("Virtual Hug Sent! 🤗")}
+            >
+              <Gift size={20} /> Receive Virtual Hug
+            </button>
+             
+             <p className="text-xs text-gray-400 mt-8">
+               Made with love for Prachuu
+             </p>
+          </div>
+        )}
+
+      </div>
     </div>
+  );
+};
 
-    <script>
-        // Audio Setup
-        const music = document.getElementById('bgMusic');
-        music.volume = 0.5;
-
-        function nextSlide(current, next) {
-            // Play music on first click
-            if(current === 's1') {
-                music.play().catch(e => console.log("Audio needs interaction"));
-            }
-
-            document.getElementById(current).classList.remove('active');
-            document.getElementById(current).classList.add('exit');
-            
-            setTimeout(() => {
-                document.getElementById(next).classList.add('active');
-            }, 300);
-        }
-
-        // Funny No Button Logic
-        const noBtn = document.getElementById('runaway-btn');
-        const funnyTexts = [
-            "Na ji Na!", 
-            "Button Kharab hai 🛠️", 
-            "Aise kaise? 😤", 
-            "Paap lagega 😈", 
-            "Try Harder! 💪", 
-            "Galat Jawab ❌"
-        ];
-        
-        function moveBtn() {
-            // Change text randomly
-            const randomText = funnyTexts[Math.floor(Math.random() * funnyTexts.length)];
-            noBtn.innerText = randomText;
-
-            // Move button randomly within view
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            
-            // Apply new position
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = `${Math.random() * 80 + 10}%`;
-            noBtn.style.top = `${Math.random() * 80 + 10}%`;
-        }
-
-        function sheSaidYes() {
-            nextSlide('s5', 's6');
-            music.volume = 1.0;
-            
-            // Confetti Explosion
-            var duration = 5 * 1000;
-            var end = Date.now() + duration;
-
-            (function frame() {
-                confetti({
-                    particleCount: 5,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 }
-                });
-                confetti({
-                    particleCount: 5,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 }
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        }
-    </script>
-</body>
-</html>
+export default PrachuuMoodFixer;
 
